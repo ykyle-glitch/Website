@@ -1,0 +1,141 @@
+:root{
+  --accent:#3b82f6;
+  --muted:#f4f4f4;
+  --bg:#fffdf9;
+  --text:#222;
+  --maxwidth:980px;
+}
+
+/* Reset & base */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  scroll-behavior:smooth;
+}
+
+/* Layout */
+.site{display:flex; min-height:100vh;}
+.sidebar{
+  width:300px;
+  background:var(--muted);
+  padding:28px 20px;
+  border-right:1px solid #e6e6e6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+}
+.profile-photo{
+  width:160px; height:160px; object-fit:cover; border-radius:50%;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  border:3px solid white;
+}
+.name{font-size:1.45rem; color:var(--accent); margin:8px 0 2px;}
+.subtitle{font-size:0.95rem; margin:0; color:#666}
+.role{font-style:italic; color:#555; font-size:0.95rem; margin-bottom:8px}
+
+/* Socials & button */
+.socials{display:flex; gap:10px; margin-top:6px}
+.socials a{color:var(--accent); font-size:1.1rem; text-decoration:none}
+.socials a:hover{color:#1f4fb7}
+.message-btn{
+  margin-top:8px;
+  background:var(--accent); color:#fff; border:0; padding:8px 14px;
+  border-radius:999px; cursor:pointer; font-weight:600;
+  box-shadow:0 6px 14px rgba(59,130,246,0.12);
+}
+.side-nav{margin-top:14px; width:100%}
+.side-nav a{
+  display:block; padding:8px 12px; color:var(--accent); text-decoration:none;
+  font-weight:600; border-radius:8px; margin-bottom:6px;
+}
+.side-nav a.active, .side-nav a:hover{
+  background:#eaf3ff; color:#0b64d6;
+}
+copyright{margin-top:auto;color:#aaa;font-size:0.85rem}
+
+/* Content / panels */
+.content{flex:1; padding:36px; max-width:var(--maxwidth); margin:0 auto; background:transparent}
+
+/* panel base */
+.panel{
+  padding:48px; border-radius:12px; min-height:40vh;
+  background:#ffffff; box-shadow:0 10px 30px rgba(12,20,30,0.04);
+  margin-bottom:28px;
+  opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;
+}
+.panel.visible{ opacity:1; transform:none; }
+.panel-inner{max-width:920px; margin:0 auto}
+.hero-panel{background:linear-gradient(180deg,#fff 0%, #fbfbfd 100%); min-height:60vh; display:flex; align-items:center}
+.eyebrow{letter-spacing:4px; font-size:0.78rem; color:var(--accent); margin-bottom:12px}
+.headline{font-size:clamp(1.6rem,3.4vw,2.4rem); margin:0 0 12px}
+.lead{max-width:72ch; color:#444}
+
+/* alternate style */
+.panel.alt{background:#fcfcfe}
+
+/* two-column resume list */
+.two-col{display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); list-style:none; padding:0; margin:0}
+.two-col li{background:#fff; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.03)}
+
+/* project cards */
+.project-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-top:18px}
+.project{background:#fff; padding:12px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.04)}
+.project img{width:100%; height:160px; object-fit:cover; border-radius:8px}
+.project h3{margin:10px 0 6px}
+.project p{margin:0;color:#444}
+
+/* See more button */
+.see-more-wrap { text-align: center; margin-top: 24px; }
+.see-more-btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(59,130,246,0.12);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.see-more-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(59,130,246,0.14); }
+
+/* responsive */
+@media (max-width:900px){
+  .site{flex-direction:column;}
+  .sidebar{width:100%; height:auto; position:relative; flex-direction:row; gap:12px; padding:14px; align-items:flex-start}
+  .profile-photo{width:64px; height:64px}
+  .name{font-size:1rem}
+  .side-nav{display:none}
+  .content{padding:20px}
+  .panel{padding:28px}
+}
+
+/* helpers */
+a { color:var(--accent) }
+
+/* === NEW THEORY LABEL STYLES === */
+.theory {
+  display: block;
+  margin-top: 6px;
+  font-style: italic;
+  color: #444;
+  padding: 4px 8px;
+  background: #f9f9f9;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+}
+
+.theory i {
+  margin-right: 6px;
+  color: var(--accent);
+  font-size: 0.95rem;
+}

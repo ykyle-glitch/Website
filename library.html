@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Library — Kairurie</title>
+  <link rel="stylesheet" href="library.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Lightbox fixes only */
+    .lib-lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    .lib-lightbox.open {
+      display: flex;
+    }
+    .lb-content img,
+    .lb-content video {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+    .lb-close,
+    .lb-prev,
+    .lb-next {
+      position: absolute;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .lb-close { top: 1rem; right: 1rem; }
+    .lb-prev { left: 1rem; top: 50%; transform: translateY(-50%); }
+    .lb-next { right: 1rem; top: 50%; transform: translateY(-50%); }
+    .lb-caption {
+      margin-top: 1rem;
+      color: #fff;
+      text-align: center;
+      max-width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div class="library-site">
+    <header class="lib-header">
+      <a class="back-home" href="index.html">&larr; Back</a>
+      <h1>Library</h1>
+      <p class="lib-sub">A roaming gallery — browse and open any piece to view in full scale</p>
+    </header>
+
+    <main class="library-main">
+      <div class="shelf">
+        <div class="shelf-title">Featured Works</div>
+        <div class="masonry" id="masonry-1">
+          <figure class="brick">
+            <img src="mekyle.jpg" alt="Poster of myself, showcasing my likes and graphic designing skills." loading="lazy">
+            <figcaption>Poster</figcaption>
+          </figure>
+          <figure class="brick">
+            <video src="videoolfuk.mp4" preload="metadata" controls></video>
+            <figcaption>The said video on the front page. (Reduced quality for better performance)</figcaption>
+          </figure>
+          <figure class="brick">
+            <img src="constructionhaha.jpg" alt="Upcoming Project (Arduino)" loading="lazy">
+            <figcaption>Upcoming Project (Arduino)</figcaption>
+          </figure>
+        </div>
+      </div>
+    </main>
+
+    <!-- Lightbox -->
+    <div id="lib-lightbox" class="lib-lightbox" aria-hidden="true">
+      <button class="lb-close" aria-label="Close">&times;</button>
+      <button class="lb-prev" aria-label="Previous"><i class="fa fa-chevron-left"></i></button>
+      <div class="lb-content"></div>
+      <button class="lb-next" aria-label="Next"><i class="fa fa-chevron-right"></i></button>
+      <div class="lb-caption"></div>
+    </div>
+
+    <footer class="lib-footer">
+      <p>Browse freely — images optimized for web. © 2025 Kairurie</p>
+    </footer>
+  </div>
+
+  <script>
+    function initMasonry() {
+      document.querySelectorAll('.masonry').forEach((m) => {
+        const bricks = [...m.querySelectorAll('.brick')];
+        m.innerHTML = '';
+        const width = document.body.clientWidth;
+        const cols = width < 700 ? 1 : width < 1000 ? 2 : 3;
+        const columns = Array.from({length: cols}, () => { 
+          const d = document.createElement('div'); 
+          d.className = 'm-col'; 
+          return d; 
+        });
+        columns.forEach(c => m.appendChild(c));
+        bricks.forEach((b, i) => columns[i % cols].appendChild(b));
+      });
+    }
+
+    window.addEventListener('load', initMasonry);
+    window.addEventListener('resize', () => { setTimeout(initMasonry, 120); });
+
+    // Lightbox
+    const lightbox = document.getElementById('lib-lightbox');
+    const lbContent = document.querySelector('.lb-content');
+    const lbCaption = document.querySelector('.lb-caption');
+    let items = [];
+    let currentIndex = -1;
+
+    function collectItems() { 
+      return [...document.querySelectorAll('.masonry img, .masonry video')]; 
+    }
+
+    function openLightbox(idx) {
+      items = collectItems();
+      currentIndex = idx;
+      const el = items[idx];
+      lbContent.innerHTML = ''; // clear previous
+      let clone;
+      if (el.tagName.toLowerCase() === 'img') {
+        clone = document.createElement('img');
+        clone.src = el.src;
+        clone.alt = el.alt || '';
+      } else if (el.tagName.toLowerCase() === 'video') {
+        clone = document.createElement('video');
+        clone.src = el.src;
+        clone.controls = true;
+        clone.autoplay = true;
+        clone.preload = 'auto';
+        clone.addEventListener('canplay', () => clone.play());
+      }
+      lbContent.appendChild(clone);
+      lbCaption.textContent = el.alt || el.nextElementSibling?.textContent || '';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lbContent.innerHTML = '';
+      currentIndex = -1;
+    }
+
+    function showNext(delta = 1) {
+      if (currentIndex < 0) return;
+      const next = (currentIndex + delta + items.length) % items.length;
+      openLightbox(next);
+    }
+
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('.masonry img, .masonry video');
+      if (el) {
+        const all = collectItems();
+        const idx = all.indexOf(el);
+        openLightbox(idx);
+      }
+    });
+
+    document.querySelector('.lb-close').addEventListener('click', closeLightbox);
+    document.querySelector('.lb-prev').addEventListener('click', () => showNext(-1));
+    document.querySelector('.lb-next').addEventListener('click', () => showNext(1));
+
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.classList.contains('open')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') showNext(1);
+        if (e.key === 'ArrowLeft') showNext(-1);
+      }
+    });
+
+    // reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, {threshold: 0.12});
+    document.querySelectorAll('.shelf, .brick').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
